@@ -1,6 +1,6 @@
 # to_visit
 
-A new Flutter project.
+ToDo List but for countries made using Flutter
 
 ## Getting Started
 
