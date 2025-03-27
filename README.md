@@ -26,6 +26,17 @@ No account or internet is required for previously viewed countries — ensuring 
 
 ---
 
+### 📸 App Screenshots
+
+| Screen       | Preview |
+|--------------|---------|
+| 🏠 **Home Screen**      | ![Home](assets/home.png) |
+| 🌍 **Country Detail**   | ![Country](assets/country.png) |
+| ⭐ **Favourites**        | ![Favourites](assets/favourites.png) |
+| ⚙️ **Settings**          | ![Settings](assets/settings.png) |
+
+---
+
 ## 🛠️ Design Rationale
 
 ### Architecture
