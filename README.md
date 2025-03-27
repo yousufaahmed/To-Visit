@@ -46,6 +46,7 @@ No account or internet is required for previously viewed countries — ensuring 
     <td><img src="assets/settings.png" width="200"/></td>
   </tr>
 </table>
+
 ---
 
 ## 🛠️ Design Rationale
