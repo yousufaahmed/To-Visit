@@ -28,13 +28,24 @@ No account or internet is required for previously viewed countries — ensuring 
 
 ### 📸 App Screenshots
 
-| Screen       | Preview |
-|--------------|---------|
-| 🏠 **Home Screen**      | ![Home](assets/home.png) |
-| 🌍 **Country Detail**   | ![Country](assets/country.png) |
-| ⭐ **Favourites**        | ![Favourites](assets/favourites.png) |
-| ⚙️ **Settings**          | ![Settings](assets/settings.png) |
-
+<table>
+  <tr>
+    <td><strong>🏠 Home Screen</strong></td>
+    <td><img src="assets/home.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td><strong>🌍 Country Detail</strong></td>
+    <td><img src="assets/country.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td><strong>⭐ Favourites</strong></td>
+    <td><img src="assets/favourites.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td><strong>⚙️ Settings</strong></td>
+    <td><img src="assets/settings.png" width="200"/></td>
+  </tr>
+</table>
 ---
 
 ## 🛠️ Design Rationale
