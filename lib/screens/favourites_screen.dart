@@ -31,7 +31,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favourite Countries')),
+      // appBar: AppBar(title: const Text('Favourite Countries')),
       body: favouriteCountries.isEmpty
           ? const Center(child: Text('No favourites yet.'))
           : ListView.builder(

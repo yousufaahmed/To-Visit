@@ -10,7 +10,7 @@ class ToVisit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'World Explorer',
+      title: 'To-Visit',
       themeMode: ThemeMode.system, // follow device setting
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),

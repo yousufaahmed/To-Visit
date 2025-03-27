@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/main_navigation.dart';
 import 'screens/country_screen.dart';
+import 'screens/all_countries_screen.dart';
 import 'theme/theme_provider.dart';
 import 'models/country_model.dart';
 
@@ -25,16 +26,19 @@ class ToVisitApp extends StatelessWidget {
             darkTheme: ThemeData.dark(useMaterial3: true),
             home: const MainNavigation(),
 
-            // ✅ Route handling for dynamic routes like /country
-            onGenerateRoute: (settings) {
-              if (settings.name == '/country') {
-                final country = settings.arguments as Country;
-                return MaterialPageRoute(
-                  builder: (_) => CountryScreen(country: country),
-                );
-              }
-              return null;
-            },
+          onGenerateRoute: (settings) {
+            if (settings.name == '/country') {
+              final country = settings.arguments as Country;
+              return MaterialPageRoute(
+                builder: (_) => CountryScreen(country: country),
+              );
+            } else if (settings.name == '/all') {
+              return MaterialPageRoute(
+                builder: (_) => const AllCountriesScreen(),
+              );
+            }
+            return null;
+          }
           );
         },
       ),

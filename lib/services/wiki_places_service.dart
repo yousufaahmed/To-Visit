@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/place_model.dart';
+import 'package:flutter/foundation.dart';
 
 class WikiPlacesService {
   static Future<List<Place>> getTopPlaces(String countryName) async {
@@ -48,7 +49,7 @@ class WikiPlacesService {
         throw Exception("Failed to load places");
       }
     } catch (e) {
-      print("Error fetching wiki places: $e");
+      debugPrint("Error fetching wiki places: $e");
       return [];
     }
   }

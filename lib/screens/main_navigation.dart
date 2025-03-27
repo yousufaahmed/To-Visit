@@ -19,7 +19,7 @@ class _MainNavigationState extends State<MainNavigation> {
     SettingsScreen(),
   ];
 
-  final List<String> titles = ['World Explorer', 'Favourites', 'Settings'];
+  final List<String> titles = ['To-Visit', 'Favourites', 'Settings'];
 
   @override
   Widget build(BuildContext context) {

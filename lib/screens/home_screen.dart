@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Country> recentlyViewed = [];
 
   String searchQuery = '';
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -31,10 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (!mounted) return;
 
-    // Manually ranked popular countries
+    // Hardcoded popular names
     final popularNames = [
       'France',
-      'United States',
       'Italy',
       'Spain',
       'Japan',
@@ -42,15 +42,21 @@ class _HomeScreenState extends State<HomeScreen> {
       'Turkey',
       'Thailand',
       'Germany',
-      'Australia'
+      'Australia',
     ];
 
-    final sortedPopular = popularNames
-        .map((name) => countries.firstWhere(
-              (c) => c.name.toLowerCase() == name.toLowerCase(),
-              orElse: () => countries.first,
-            ))
-        .toList();
+    // Match names with fallback to empty list if nothing found
+    final sortedPopular = countries.isEmpty
+        ? <Country>[]
+        : popularNames.map((name) {
+            try {
+              return countries.firstWhere(
+                (c) => c.name.toLowerCase().contains(name.toLowerCase()),
+              );
+            } catch (e) {
+              return null;
+            }
+          }).whereType<Country>().toList();
 
     countries.sort((a, b) => a.name.compareTo(b.name));
 
@@ -58,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       allCountries = countries;
       filteredCountries = countries;
       popularCountries = sortedPopular;
+      isLoading = false;
     });
   }
 
@@ -68,9 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
 
     setState(() {
-      recentlyViewed = recents
-          .map((json) => Country.fromJsonString(json))
-          .toList();
+      recentlyViewed = recents.map((json) => Country.fromJsonString(json)).toList();
     });
   }
 
@@ -89,10 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     recentJsons.removeWhere((item) => Country.fromJsonString(item).name == country.name);
     recentJsons.insert(0, country.toJsonString());
-
     if (recentJsons.length > 5) recentJsons.removeLast();
-
     await prefs.setStringList('recently_viewed', recentJsons);
+
     if (!mounted) return;
 
     Navigator.pushNamed(context, '/country', arguments: country);
@@ -100,6 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -115,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
               filled: true,
             ),
           ),
-
           const SizedBox(height: 16),
 
           if (searchQuery.isNotEmpty) ...[
@@ -157,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
