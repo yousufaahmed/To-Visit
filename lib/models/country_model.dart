@@ -1,14 +1,14 @@
-
 import 'dart:convert';
 
+/// A model representing a country and its relevant data for display and storage.
 class Country {
-  final String name;
-  final String capital;
-  final String region;
-  final int population;
-  final List<double> latlng;
-  final String flagUrl;
-  final String code;
+  final String name;          // Common name of the country
+  final String capital;       // Capital city
+  final String region;        // Geographical region (e.g. Europe, Asia)
+  final int population;       // Population count
+  final List<double> latlng;  // Latitude and longitude coordinates
+  final String flagUrl;       // URL to the country's flag image (PNG format)
+  final String code;          // Country code (e.g. "FR" for France)
 
   Country({
     required this.name,
@@ -20,6 +20,7 @@ class Country {
     required this.code,
   });
 
+  /// Factory constructor to create a Country instance from the REST Countries API JSON.
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
       name: json['name']['common'] ?? 'N/A',
@@ -36,7 +37,7 @@ class Country {
     );
   }
 
-  // Convert Country to JSON string for storage
+  /// Serialises the Country object into a JSON string for storage (e.g. SharedPreferences).
   String toJsonString() => jsonEncode({
         'name': name,
         'capital': capital,
@@ -47,7 +48,7 @@ class Country {
         'code': code,
       });
 
-  // Convert back from JSON string
+  /// Factory constructor to recreate a Country object from a stored JSON string.
   factory Country.fromJsonString(String jsonStr) {
     final data = jsonDecode(jsonStr);
     return Country(

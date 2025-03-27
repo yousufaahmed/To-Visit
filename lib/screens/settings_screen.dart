@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_provider.dart';
 
+/// A screen for managing app settings like theme and user data.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -16,31 +17,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    loadThemePreference();
+    loadThemePreference(); // Load user's theme preference on init
   }
 
+  /// Loads the theme preference from SharedPreferences
   Future<void> loadThemePreference() async {
     final prefs = await SharedPreferences.getInstance();
     final dark = prefs.getBool('dark_mode') ?? false;
     setState(() => isDarkMode = dark);
   }
 
+  /// Toggles the app's dark mode and saves the preference
   Future<void> toggleTheme(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    themeProvider.toggleTheme(value);
+    themeProvider.toggleTheme(value); // Notify app to switch theme
     setState(() => isDarkMode = value);
-
+    /// Save the preference
+    await prefs.setBool('dark_mode', value);
   }
 
+  /// Clears all user-specific data stored on device
   Future<void> clearAllUserData() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Remove favourites and recents
+    // Remove favourites and recently viewed
     await prefs.remove('favourite_countries');
     await prefs.remove('recently_viewed');
 
-    // Remove all notes
+    // Remove notes with key prefix 'note_'
     final keys = prefs.getKeys();
     for (var key in keys) {
       if (key.startsWith('note_')) {
@@ -49,11 +54,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     if (!mounted) return;
+
+    // Show confirmation to the user
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("All data cleared.")),
     );
   }
 
+  /// Shows confirmation dialog before clearing user data
   void showClearDataDialog() {
     showDialog(
       context: context,
@@ -80,9 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Settings')),
+      // No AppBar used here since it’s inside a tab navigation
       body: ListView(
         children: [
+          // Dark Mode toggle
           SwitchListTile(
             title: const Text('Dark Mode'),
             subtitle: const Text('Match device theme by default'),
@@ -90,6 +99,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onChanged: toggleTheme,
           ),
           const Divider(),
+
+          // GDPR & data usage information
           const ListTile(
             title: Text('Data Usage & GDPR'),
             subtitle: Text(
@@ -97,6 +108,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Divider(),
+
+          // Clear data option
           ListTile(
             leading: const Icon(Icons.delete_forever),
             title: const Text("Clear All Data"),

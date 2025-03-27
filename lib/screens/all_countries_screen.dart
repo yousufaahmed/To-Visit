@@ -4,6 +4,7 @@ import '../models/country_model.dart';
 import '../services/rest_countries_service.dart';
 import '../widgets/country_card.dart';
 
+/// Screen displaying a searchable, scrollable list of all countries.
 class AllCountriesScreen extends StatefulWidget {
   const AllCountriesScreen({super.key});
 
@@ -12,19 +13,20 @@ class AllCountriesScreen extends StatefulWidget {
 }
 
 class _AllCountriesScreenState extends State<AllCountriesScreen> {
-  List<Country> allCountries = [];
-  List<Country> filteredCountries = [];
-  String searchQuery = '';
+  List<Country> allCountries = [];         // Full list of countries fetched from API
+  List<Country> filteredCountries = [];    // List filtered by search
+  String searchQuery = '';                 // Current search input
 
   @override
   void initState() {
     super.initState();
-    loadCountries();
+    loadCountries(); // Fetch country data when screen loads
   }
 
+  /// Fetches all countries from the API, sorts them, and updates state
   Future<void> loadCountries() async {
     final countries = await RestCountriesService.fetchCountries();
-    countries.sort((a, b) => a.name.compareTo(b.name));
+    countries.sort((a, b) => a.name.compareTo(b.name)); // Alphabetical
     if (!mounted) return;
     setState(() {
       allCountries = countries;
@@ -32,6 +34,7 @@ class _AllCountriesScreenState extends State<AllCountriesScreen> {
     });
   }
 
+  /// Filters country list based on search input
   void onSearch(String value) {
     setState(() {
       searchQuery = value;
@@ -41,6 +44,7 @@ class _AllCountriesScreenState extends State<AllCountriesScreen> {
     });
   }
 
+  /// Handles tapping a country card — saves to recently viewed and navigates
   void onCountryTapped(Country country) async {
     final prefs = await SharedPreferences.getInstance();
     final recents = prefs.getStringList('recently_viewed') ?? [];
@@ -63,7 +67,7 @@ class _AllCountriesScreenState extends State<AllCountriesScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Search bar
+            // Search bar input
             TextField(
               onChanged: onSearch,
               decoration: InputDecoration(
@@ -74,6 +78,7 @@ class _AllCountriesScreenState extends State<AllCountriesScreen> {
               ),
             ),
             const SizedBox(height: 16),
+
             // List of countries
             Expanded(
               child: filteredCountries.isEmpty

@@ -1,5 +1,3 @@
-// File: widgets/place_card.dart
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/place_model.dart';
@@ -9,6 +7,7 @@ class PlaceCard extends StatelessWidget {
 
   const PlaceCard({super.key, required this.place});
 
+  // Helper method to open a URL in an external application
   void _openUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -21,9 +20,10 @@ class PlaceCard extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onSurface;
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -32,6 +32,7 @@ class PlaceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Show image if one is available
             if (place.imageUrl != null && place.imageUrl!.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -52,18 +53,30 @@ class PlaceCard extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 8),
+
+            // Place title
             Text(
               place.title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: textColor, // Theme-aware
+              ),
             ),
             const SizedBox(height: 6),
+
+            // Place description
             Text(
-              place.summary,
+              place.summary.isNotEmpty
+                  ? place.summary
+                  : "No description available",
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.black87),
+              style: TextStyle(color: textColor), // Theme-aware
             ),
             const SizedBox(height: 10),
+
+            // Buttons for Maps and Wikipedia
             Row(
               children: [
                 TextButton.icon(

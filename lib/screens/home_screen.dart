@@ -4,6 +4,7 @@ import '../models/country_model.dart';
 import '../services/rest_countries_service.dart';
 import '../widgets/country_card.dart';
 
+/// Home screen that shows search, popular countries, and recently viewed countries.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,27 +13,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Country> allCountries = [];
-  List<Country> filteredCountries = [];
-  List<Country> popularCountries = [];
-  List<Country> recentlyViewed = [];
+  List<Country> allCountries = [];         // Complete list of countries from API
+  List<Country> filteredCountries = [];    // Filtered countries for search
+  List<Country> popularCountries = [];     // Hardcoded popular countries list
+  List<Country> recentlyViewed = [];       // Countries saved to shared preferences
 
   String searchQuery = '';
-  bool isLoading = true;
+  bool isLoading = true;                   // Indicates loading state for countries
 
   @override
   void initState() {
     super.initState();
-    loadCountries();
-    loadRecent();
+    loadCountries(); // Load all countries from API
+    loadRecent();    // Load recent countries from local storage
   }
 
+  /// Fetch all countries and filter to get popular ones
   Future<void> loadCountries() async {
     final countries = await RestCountriesService.fetchCountries();
 
     if (!mounted) return;
 
-    // Hardcoded popular names
+    // Manually defined list of popular countries
     final popularNames = [
       'France',
       'Italy',
@@ -45,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'Australia',
     ];
 
-    // Match names with fallback to empty list if nothing found
+    // Try to match each popular country by name
     final sortedPopular = countries.isEmpty
         ? <Country>[]
         : popularNames.map((name) {
@@ -68,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Load recently viewed countries from shared preferences
   Future<void> loadRecent() async {
     final prefs = await SharedPreferences.getInstance();
     final recents = prefs.getStringList('recently_viewed') ?? [];
@@ -79,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Filter countries based on search query
   void onSearch(String value) {
     setState(() {
       searchQuery = value;
@@ -88,10 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Save country to recents and navigate to detail screen
   void onCountryTapped(Country country) async {
     final prefs = await SharedPreferences.getInstance();
     final recentJsons = prefs.getStringList('recently_viewed') ?? [];
 
+    // Avoid duplicates and limit to 5
     recentJsons.removeWhere((item) => Country.fromJsonString(item).name == country.name);
     recentJsons.insert(0, country.toJsonString());
     if (recentJsons.length > 5) recentJsons.removeLast();
@@ -113,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search Bar
+          // Search input
           TextField(
             onChanged: onSearch,
             decoration: InputDecoration(
@@ -125,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
 
+          // If searching, show filtered results
           if (searchQuery.isNotEmpty) ...[
             Text("Search Results", style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
@@ -141,11 +148,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
           ],
 
+          // If not searching, show welcome, popular, and recent
           if (searchQuery.isEmpty) ...[
             Text("Welcome back 👋", style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
 
-            // Popular Countries
+            // Popular countries horizontal scroll
             if (popularCountries.isNotEmpty) ...[
               Text("Popular countries", style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
@@ -184,6 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+
+              // Button to view all countries
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -194,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
             ],
 
-            // Recently Viewed
+            // Recently viewed list
             if (recentlyViewed.isNotEmpty) ...[
               Text("Recently viewed", style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),

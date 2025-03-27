@@ -1,5 +1,3 @@
-// File: screens/country_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,6 +12,8 @@ import '../services/storage_service.dart';
 import '../services/opentripmap_service.dart';
 import '../widgets/place_card.dart';
 
+/// Screen that shows detailed information for a selected country,
+/// including flag, capital, population, map, top places, notes, etc.
 class CountryScreen extends StatefulWidget {
   final Country country;
 
@@ -42,6 +42,7 @@ class _CountryDetailScreenState extends State<CountryScreen> {
     loadData();
   }
 
+  /// Saves this country to the recently viewed list in shared preferences.
   Future<void> saveToRecentlyViewed() async {
     final prefs = await SharedPreferences.getInstance();
     final recentJsons = prefs.getStringList('recently_viewed') ?? [];
@@ -51,6 +52,7 @@ class _CountryDetailScreenState extends State<CountryScreen> {
     await prefs.setStringList('recently_viewed', recentJsons);
   }
 
+  /// Loads data from local storage and API: favourites, notes, and POIs.
   Future<void> loadData() async {
     final connectivity = await Connectivity().checkConnectivity();
     setState(() => isOffline = connectivity == ConnectivityResult.none);
@@ -64,7 +66,7 @@ class _CountryDetailScreenState extends State<CountryScreen> {
         widget.country.latlng[0],
         widget.country.latlng[1],
       );
-      
+
       _noteController.text = userNote;
 
       for (var place in places) {
@@ -81,15 +83,18 @@ class _CountryDetailScreenState extends State<CountryScreen> {
     setState(() => isLoading = false);
   }
 
+  /// Toggles this country as a favourite and updates storage.
   void toggleFavourite() async {
     setState(() => isFavourite = !isFavourite);
     await StorageService.setFavourite(widget.country, isFavourite);
   }
 
+  /// Saves user notes about the country to shared preferences.
   void saveNote(String value) async {
     await StorageService.setNote(widget.country.name, value);
   }
 
+  /// Scrolls to the matching place widget on the screen.
   void scrollToPlace(String title) {
     final key = placeKeys[title];
     if (key != null && key.currentContext != null) {
@@ -124,10 +129,12 @@ class _CountryDetailScreenState extends State<CountryScreen> {
       appBar: AppBar(
         title: Text(country.name),
         actions: [
+          // Toggle favourite icon
           IconButton(
             icon: Icon(isFavourite ? Icons.star : Icons.star_border),
             onPressed: toggleFavourite,
           ),
+          // Share note and country
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
@@ -156,6 +163,7 @@ class _CountryDetailScreenState extends State<CountryScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
+              // Country info row
               Row(
                 children: [
                   Image.network(country.flagUrl, width: 80),
@@ -164,11 +172,11 @@ class _CountryDetailScreenState extends State<CountryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(country.name,
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(country.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         Text("Capital: ${country.capital}"),
                         Text("Region: ${country.region}"),
                         Text("Population: ${country.population}"),
+                        // Wikipedia link
                         TextButton(
                           onPressed: () async {
                             final query = country.name.replaceAll(' ', '+');
@@ -187,6 +195,8 @@ class _CountryDetailScreenState extends State<CountryScreen> {
                 ],
               ),
               const SizedBox(height: 20),
+
+              // Country map
               SizedBox(
                 height: 200,
                 child: FlutterMap(
@@ -215,7 +225,10 @@ class _CountryDetailScreenState extends State<CountryScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // Points of Interest
               Text("Top Places to Visit", style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 10),
               if (places.isEmpty)
@@ -228,7 +241,10 @@ class _CountryDetailScreenState extends State<CountryScreen> {
                   child: PlaceCard(place: place),
                 );
               }),
+
               const Divider(height: 40),
+
+              // Notes section
               Text("Your Notes", style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 10),
               TextField(
